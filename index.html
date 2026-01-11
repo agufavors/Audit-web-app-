@@ -1,327 +1,167 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Visibility Snapshot — Quick Audit</title>
-<style>
-  :root{
-    --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2;
-    --accent:#34b399; --accent-2:#60a5fa; --warn:#f59e0b;
-    --glass: rgba(255,255,255,0.03);
-    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  }
-  html,body{height:100%; margin:0; background:linear-gradient(180deg,#071025 0%, #081225 100%); color:#e6eef6;}
-  .wrap{max-width:960px;margin:28px auto;padding:20px;}
-  header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
-  header h1{font-size:20px;margin:0}
-  .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 6px 18px rgba(3,7,18,0.6)}
-  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  input[type=text], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
-  .row{display:flex;gap:12px}
-  .col{flex:1}
-  .small{font-size:13px;color:var(--muted)}
-  .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#022; padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-  .score-ring{display:flex;align-items:center;gap:16px}
-  .ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:4px solid rgba(255,255,255,0.03)}
-  .score{font-size:22px;font-weight:700}
-  .status{font-weight:700}
-  ul.recs{padding-left:18px;margin:8px 0}
-  .muted-note{color:var(--muted);font-size:13px}
-  .cta-row{display:flex;gap:10px;flex-wrap:wrap}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:9px 12px;border-radius:10px;cursor:pointer}
-  footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
-  @media(max-width:720px){
-    .row{flex-direction:column}
-    .score-ring{gap:8px}
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Audit Web App — Fun Edition</title>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #00c6ff; /* bright blue */
+      --bg2: #00f260; /* green */
+      --white: #ffffff;
+      --glass: rgba(255,255,255,0.08);
+      --card: rgba(255,255,255,0.9);
+      --muted: rgba(0,0,0,0.6);
+      font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    html,body{height:100%;margin:0}
+    body{
+      background: linear-gradient(135deg,var(--bg1) 0%, #7ae7bf 35%, var(--white) 100%);
+      background-attachment: fixed;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      color:#073642;
+      display:flex;align-items:center;justify-content:center;padding:40px;
+    }
+    .scene{
+      width:min(1100px,96%);
+      backdrop-filter: blur(8px) saturate(120%);
+      border-radius:18px;
+      box-shadow: 0 10px 30px rgba(8,35,63,0.18);
+      overflow:hidden;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.85));
+      display:grid;grid-template-columns:1fr 420px;gap:24px;padding:28px;
+      align-items:stretch;
+    }
+    header{grid-column:1/-1;display:flex;align-items:center;gap:16px}
+    .logo{
+      width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--bg2),var(--bg1));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:22px;box-shadow:0 6px 18px rgba(0,0,0,0.12)
+    }
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted)}
+
+    /* main area */
+    .main{
+      padding:12px 6px 6px 6px;
+    }
+    .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,40,70,0.06);} 
+    .stat{font-size:28px;font-weight:700}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* sidebar */
+    .sidebar{padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(0,194,255,0.12),rgba(0,242,96,0.06));height:100%;display:flex;flex-direction:column;gap:12px}
+    .cta{margin-top:auto}
+    .btn{
+      display:inline-block;padding:12px 16px;border-radius:12px;color:white;font-weight:600;text-decoration:none;border:none;cursor:pointer;
+      background:linear-gradient(90deg,#0562d8,#00b894);
+      box-shadow:0 8px 20px rgba(4,64,120,0.18);
+      transition:transform .18s ease,box-shadow .18s ease
+    }
+    .btn:active{transform:translateY(2px)}
+    .small{font-size:13px;padding:8px 12px;border-radius:10px}
+
+    /* fun shapes */
+    .blobs{position:absolute;inset:0;pointer-events:none}
+    .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.7}
+    .blob.b1{width:360px;height:360px;left:-80px;top:-100px;background:radial-gradient(circle at 30% 30%, rgba(0,198,255,0.9), rgba(0,198,255,0.4));}
+    .blob.b2{width:300px;height:300px;right:-80px;bottom:-80px;background:radial-gradient(circle at 70% 70%, rgba(0,242,96,0.9), rgba(0,242,96,0.35));}
+
+    /* responsive */
+    @media (max-width:900px){
+      .scene{grid-template-columns:1fr;}
+      .sidebar{order:-1}
+      .card-grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="blobs" aria-hidden="true">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+  </div>
+  <main class="scene" role="main">
     <header>
+      <div class="logo">AW</div>
       <div>
-        <h1>Visibility Snapshot</h1>
-        <div class="small">Quick audit to check how easy your business is to find on Google</div>
+        <h1>Audit Web App — Welcome!</h1>
+        <p class="lead">A lighter, friendlier interface with blue & green gradients ✨</p>
       </div>
     </header>
 
-    <form id="auditForm" class="card" onsubmit="event.preventDefault(); runAudit();">
-      <div class="row">
-        <div class="col">
-          <label>Business name</label>
-          <input id="businessName" type="text" placeholder="e.g. Aisha Tailors">
-        </div>
-        <div class="col">
-          <label>Category</label>
-          <select id="category">
-            <option value="retail">Retail / Shop</option>
-            <option value="service">Service (Tailor, Barber)</option>
-            <option value="food">Food / Restaurant</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="row">
-        <div class="col">
-          <label>City / Area served</label>
-          <input id="area" type="text" placeholder="e.g. Surulere, Lagos">
-        </div>
-        <div class="col">
-          <label>Do you have a physical location?</label>
-          <select id="physical">
-            <option value="yes">Yes — customers visit</option>
-            <option value="no">No — mobile / delivery</option>
-            <option value="maybe">I sometimes stay in town</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="row">
-        <div class="col">
-          <label>Google Business Profile?</label>
-          <select id="gbp">
-            <option value="yes">Yes — claimed</option>
-            <option value="not-sure">Not sure</option>
-            <option value="no">No / not claimed</option>
-          </select>
-        </div>
-        <div class="col">
-          <label>Website?</label>
-          <select id="website">
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="card" style="padding:12px;">
-        <label>How do customers usually find you?</label>
-        <select id="findsBy">
-          <option value="referrals">Referrals / Word of mouth</option>
-          <option value="google">Google / Maps</option>
-          <option value="social">Social media</option>
-          <option value="mixed">Mixed / Not sure</option>
-        </select>
-
-        <div style="height:10px"></div>
-        <label class="small">Active online presence (photos, reviews)</label>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button type="button" class="ghost" id="photosBtn" onclick="toggle('photosBtn')">Has photos</button>
-          <button type="button" class="ghost" id="reviewsBtn" onclick="toggle('reviewsBtn')">Has reviews</button>
-        </div>
-      </div>
-
-      <div style="height:12px"></div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn" type="submit">Run quick check</button>
-        <button class="ghost" type="button" onclick="resetForm()">Reset</button>
-        <div class="muted-note" style="margin-left:auto">No data is sent anywhere — this is a local quick check.</div>
-      </div>
-    </form>
-
-    <div id="resultArea" style="display:none" class="card" aria-live="polite">
-      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
-        <div style="flex:1 1 260px">
-          <div class="score-ring">
-            <div class="ring" id="ring" aria-hidden="true">
-              <div class="score" id="scoreVal">0</div>
-              <div style="font-size:12px;color:var(--muted)">/100</div>
-            </div>
-            <div>
-              <div class="status" id="scoreDesc">Low visibility</div>
-              <div class="small muted-note" id="scoreNote">What this means</div>
-            </div>
-          </div>
-
-          <div style="height:12px"></div>
-
+    <section class="main">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
-            <div class="small" style="margin-bottom:6px">Google Visibility Snapshot</div>
-            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:12px;border-radius:10px">
-              <div><strong>Profile claimed:</strong> <span id="claimed">Unknown</span></div>
-              <div><strong>Search visibility:</strong> <span id="searchVis">Low</span></div>
-              <div><strong>Maps visibility:</strong> <span id="mapsVis">Low</span></div>
-              <div><strong>Trust signals:</strong> <span id="trust">Missing</span></div>
-            </div>
+            <div class="muted">Open Audits</div>
+            <div class="stat" id="openAudits">12</div>
           </div>
-        </div>
-
-        <div style="flex:1 1 320px">
-          <div class="small" style="margin-bottom:6px">Top issues (what's blocking visibility)</div>
-          <ul id="issues" class="recs"></ul>
-
-          <div style="height:10px"></div>
-          <div class="small" style="margin-bottom:6px">Recommendations</div>
-          <ul id="recoList" class="recs"></ul>
-
-          <div style="height:12px"></div>
-          <div class="cta-row">
-            <button class="btn" id="helpBtn">Request help — quick setup</button>
-            <button class="ghost" id="shareBtn">Copy short report</button>
-          </div>
+          <div class="muted small">Updated just now</div>
         </div>
       </div>
-    </div>
 
-    <footer class="muted-note">Designed for quick, local-friendly visibility checks — works offline in the browser.</footer>
-  </div>
+      <div class="card-grid">
+        <div class="card">
+          <div class="muted">Due this week</div>
+          <div style="font-weight:700;margin-top:8px">3 items</div>
+          <div class="muted" style="margin-top:8px">Make sure to check the <strong>priority</strong> flagged audits.</div>
+        </div>
+        <div class="card">
+          <div class="muted">Team activity</div>
+          <div style="font-weight:700;margin-top:8px">8 comments</div>
+          <div class="muted" style="margin-top:8px">Recent collaboration across projects.</div>
+        </div>
+      </div>
 
-<script>
-  // Toggle small state buttons
-  function toggle(id){
-    const el = document.getElementById(id);
-    el.classList.toggle('active');
-    if(el.classList.contains('active')){
-      el.style.borderColor = 'rgba(52,179,153,0.2)';
-      el.style.background = 'linear-gradient(90deg, rgba(52,179,153,0.08), rgba(96,165,250,0.04))';
-      el.dataset.on = '1';
-    } else {
-      el.style.borderColor = 'rgba(255,255,255,0.06)';
-      el.style.background = 'transparent';
-      el.dataset.on = '0';
-    }
-  }
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn small" onclick="alert('Create new audit — coming soon!')">+ New Audit</button>
+        <button class="btn small" style="background:linear-gradient(90deg,#9be15d,#00b4db)" onclick="alert('Filter applied')">Filter</button>
+      </div>
+    </section>
 
-  function resetForm(){
-    document.getElementById('auditForm').reset();
-    ['photosBtn','reviewsBtn'].forEach(id=>{
-      const el=document.getElementById(id);
-      el.classList.remove('active');
-      el.dataset.on = '0';
-      el.style.background='transparent';
-      el.style.borderColor='rgba(255,255,255,0.06)';
-    });
-    document.getElementById('resultArea').style.display='none';
-  }
+    <aside class="sidebar">
+      <div style="font-weight:700">Quick actions</div>
+      <div class="card" style="padding:12px;box-shadow:none;background:transparent">
+        <div class="muted">Export reports</div>
+        <div style="margin-top:8px"><button class="btn small" onclick="alert('Exported!')">Export</button></div>
+      </div>
 
-  function runAudit(){
-    // Read inputs
-    const name = (document.getElementById('businessName').value || 'Your business').trim();
-    const area = (document.getElementById('area').value || '').trim();
-    const gbp = document.getElementById('gbp').value; // yes / not-sure / no
-    const website = document.getElementById('website').value; // yes / no
-    const physical = document.getElementById('physical').value; // yes / no / maybe
-    const findsBy = document.getElementById('findsBy').value; // referrals / google / social / mixed
-    const photos = document.getElementById('photosBtn').dataset.on === '1';
-    const reviews = document.getElementById('reviewsBtn').dataset.on === '1';
+      <div class="card" style="padding:12px;box-shadow:none;background:transparent">
+        <div class="muted">Theme</div>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button class="small" style="background:white;border:1px solid rgba(0,0,0,0.06)" onclick="setTheme('light')">Light</button>
+          <button class="small" style="background:linear-gradient(90deg,#00c6ff,#00f260);color:white;border:none" onclick="setTheme('gradient')">Blue/Green</button>
+        </div>
+      </div>
 
-    // Scoring weights (adjust here if needed)
-    const weights = {
-      gbp: 40,    // claimed profile presence
-      website: 20,
-      physical: 10,
-      findsByGoogle: 15,
-      activePresence: 15  // photos/reviews
-    };
+      <div class="cta">
+        <div class="muted">Share</div>
+        <div style="margin-top:8px"><button class="btn" onclick="navigator.clipboard?.writeText(location.href).then(()=>alert('Link copied'))">Copy link</button></div>
+      </div>
+    </aside>
+  </main>
 
-    // Calculate score
-    let score = 0;
-    if(gbp === 'yes') score += weights.gbp;
-    else if(gbp === 'not-sure') score += Math.round(weights.gbp * 0.4);
-
-    if(website === 'yes') score += weights.website;
-    if(physical === 'yes') score += weights.physical;
-    else if(physical === 'maybe') score += Math.round(weights.physical * 0.5);
-
-    if(findsBy === 'google') score += weights.findsByGoogle;
-    else if(findsBy === 'mixed') score += Math.round(weights.findsByGoogle * 0.5);
-
-    // active presence: photos and/or reviews
-    if(photos && reviews) score += weights.activePresence;
-    else if(photos || reviews) score += Math.round(weights.activePresence * 0.6);
-
-    if(score > 100) score = 100;
-
-    // Interpret score
-    let desc = 'Low visibility';
-    let note = 'Your business is hard to find on Google.';
-    if(score >= 75){
-      desc = 'Good visibility';
-      note = 'Your business shows up clearly for local searches.';
-    } else if(score >= 40){
-      desc = 'Moderate visibility';
-      note = 'Some things are working, but key gaps remain.';
+  <script>
+    // small interactive bits to make it feel alive
+    function setTheme(t){
+      if(t==='light'){
+        document.body.style.background = 'linear-gradient(135deg,#ffffff 0%, #e6f7ff 60%)';
+      } else {
+        document.body.style.background = 'linear-gradient(135deg,#00c6ff 0%, #7ae7bf 35%, #ffffff 100%)';
+      }
     }
 
-    // Snapshot items
-    const claimedText = (gbp === 'yes') ? 'Claimed' : (gbp === 'not-sure' ? 'Needs review' : 'Not claimed');
-    const trust = (photos || reviews) ? (reviews ? 'Has reviews' : 'Has photos') : 'Missing';
-    const searchVis = (score >= 75) ? 'High' : (score >= 40 ? 'Medium' : 'Low');
-    const mapsVis = (score >= 60) ? 'Visible' : (score >= 30 ? 'Partially visible' : 'Hidden');
-
-    // Top issues (simple rules)
-    const issues = [];
-    if(gbp === 'no') issues.push('Google Business Profile not claimed.');
-    if(gbp === 'not-sure') issues.push('Google profile needs checking/claiming.');
-    if(website === 'no') issues.push('No website present (helps trust).');
-    if(!(photos || reviews)) issues.push('Few or no photos/reviews to build trust.');
-    if(physical !== 'yes') issues.push('Limited physical presence — make contact details and service area clear.');
-    if(findsBy === 'referrals') issues.push('Relying on referrals — online visibility can capture new customers.');
-
-    if(issues.length === 0) issues.push('No obvious blockers detected from the quick info.');
-
-    // Recommendations (short)
-    const recs = [];
-    if(gbp !== 'yes') recs.push('Claim and complete your Google Business Profile (name, address, hours, photos).');
-    if(!photos) recs.push('Add clear photos of your place, products or work samples.');
-    if(!reviews) recs.push('Encourage a few customers to leave short reviews.');
-    if(website === 'no') recs.push('Add at least a simple website or link page with contact details.');
-    recs.push('Keep your profile updated regularly (posts, photos).');
-
-    // Render results
-    document.getElementById('scoreVal').textContent = score;
-    document.getElementById('scoreDesc').textContent = desc;
-    document.getElementById('scoreNote').textContent = note;
-    document.getElementById('claimed').textContent = claimedText;
-    document.getElementById('trust').textContent = trust;
-    document.getElementById('searchVis').textContent = searchVis;
-    document.getElementById('mapsVis').textContent = mapsVis;
-
-    const issuesEl = document.getElementById('issues');
-    issuesEl.innerHTML = '';
-    issues.forEach(it=>{
-      const li = document.createElement('li');
-      li.textContent = it;
-      issuesEl.appendChild(li);
-    });
-
-    const recoEl = document.getElementById('recoList');
-    recoEl.innerHTML = '';
-    recs.forEach(it=>{
-      const li = document.createElement('li');
-      li.textContent = it;
-      recoEl.appendChild(li);
-    });
-
-    // Show result area
-    document.getElementById('resultArea').style.display = 'block';
-
-    // Prepare shareable short report for copy button
-    const shortReport = `${name} (${area}) — Visibility score: ${score}/100\nIssues: ${issues.join(' | ')}\nTop fix: ${recs[0]}\nContact me to set this up.`;
-    document.getElementById('shareBtn').onclick = ()=> {
-      navigator.clipboard?.writeText(shortReport).then(()=> {
-        alert('Short report copied. You can paste it in WhatsApp or save it.');
-      }).catch(()=> {
-        prompt('Copy this report:', shortReport);
-      });
-    };
-
-    // Help button opens prefilled WhatsApp message (change phone if you want)
-    document.getElementById('helpBtn').onclick = ()=> {
-      const phone = ''; // optional: add country code + phone number if you want to open direct chat
-      const message = encodeURIComponent(`Hi, I ran a quick check for ${name}. Score ${score}/100. I can help set this up so customers can find you on Google. Are you interested?`);
-      const url = phone ? `https://wa.me/${phone}?text=${message}` : `https://api.whatsapp.com/send?text=${message}`;
-      window.open(url, '_blank');
-    };
-  }
-</script>
+    // demo: randomize open audits number so the page feels dynamic
+    function randomizeStats(){
+      const el = document.getElementById('openAudits');
+      if(!el) return;
+      el.textContent = Math.floor(Math.random()*24)+1;
+    }
+    setInterval(randomizeStats,4500);
+    randomizeStats();
+  </script>
 </body>
-  </html>
+</html>
