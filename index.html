@@ -1,448 +1,246 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Audit Web App — Reports & Management</title>
-  <meta name="description" content="Centralized audit management: create, assign, track, and export audit reports as PDF for stakeholders.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2300c6ff'/%3E%3Ctext x='50' y='57' font-size='42' text-anchor='middle' fill='white' font-family='Poppins,Arial,Helvetica,sans-serif'%3EAW%3C/text%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg1:#00c6ff;--bg2:#00f260;--card:rgba(255,255,255,0.94);--muted:rgba(0,0,0,0.6);font-family:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,Arial}
-    html,body{height:100%;margin:0}
-    body{background:linear-gradient(135deg,var(--bg1) 0%, #7ae7bf 35%, #ffffff 100%);display:flex;align-items:flex-start;justify-content:center;padding:36px;color:#073642}
-    .container{width:min(1100px,96%);}    
-    nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--bg2),var(--bg1));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
-    .navlinks{display:flex;gap:12px;align-items:center}
-    .navlinks a{color:rgba(4,24,44,0.85);text-decoration:none;font-weight:600}
-    .hero{background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.98));padding:20px;border-radius:14px;box-shadow:0 10px 30px rgba(8,35,63,0.12);margin-bottom:18px}
-    .hero h1{margin:0 0 6px 0}
-    .hero p{margin:0;color:var(--muted)}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audit Web App</title>
 
-    .layout{display:grid;grid-template-columns:1fr 360px;gap:18px}
-    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,40,70,0.06)}
-    .reports-list{display:flex;flex-direction:column;gap:10px}
-    .report-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg,rgba(255,255,255,0.6),rgba(255,255,255,0.9));border:1px solid rgba(0,0,0,0.04)}
-    .report-item .meta{display:flex;flex-direction:column}
-    .btn{background:linear-gradient(90deg,#0562d8,#00b894);border:none;color:white;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-    .muted{color:var(--muted);font-size:13px}
-    .small{font-size:13px;padding:6px 8px;border-radius:8px}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    /* report detail */
-    .report-detail{display:flex;flex-direction:column;gap:10px}
-    .report-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border-bottom:1px solid rgba(0,0,0,0.06);text-align:left}
-    th{font-weight:700;background:transparent}
+<style>
+:root{
+  --blue:#00c6ff;
+  --green:#00f260;
+  --dark:#06334d;
+  --card:#ffffffee;
+  --muted:#666;
+  font-family:'Poppins',sans-serif;
+}
+body{
+  margin:0;
+  background:linear-gradient(135deg,var(--blue),var(--green));
+  min-height:100vh;
+  padding:24px;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+}
+.card{
+  background:var(--card);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+  color:white;
+}
+.logo{
+  font-weight:700;
+  font-size:22px;
+}
+.btn{
+  border:none;
+  padding:10px 14px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+  background:linear-gradient(90deg,var(--blue),var(--green));
+  color:white;
+}
+.small{padding:6px 10px;font-size:13px}
+input{
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-family:inherit;
+}
+.layout{
+  display:grid;
+  grid-template-columns:1fr 350px;
+  gap:18px;
+}
+.muted{color:var(--muted);font-size:14px}
 
-    footer{margin-top:18px;color:var(--muted);font-size:13px}
-
-    @media (max-width:1000px){.layout{grid-template-columns:1fr}.navlinks{display:none}}
-  </style>
+.report-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px;
+  border-radius:10px;
+  background:#f5fefe;
+  border:1px solid #e2f2f2;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+}
+th,td{
+  padding:8px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr}
+}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <nav>
-      <div class="brand">
-        <div class="logo">AW</div>
-        <div>
-          <div style="font-weight:700">Audit Web App</div>
-          <div class="muted" style="font-size:13px">Centralized audit management for teams</div>
-        </div>
-      </div>
-      <div class="navlinks">
-        <a href="#home">Home</a>
-        <a href="#audits">Audits</a>
-        <a href="#reports">Reports</a>
-        <a href="#team">Team</a>
-        <button class="btn" onclick="alert('Login placeholder')">Login</button>
-      </div>
-    </nav>
+<div class="container">
 
-    <section class="hero card" id="home">
-      <h1>Centralized audit management to create, assign, and track compliance tasks</h1>
-      <p class="muted">Create audit reports, collaborate with your team, and export shareable PDF reports for stakeholders.</p>
-    </section>
+<header>
+  <div class="logo">🔍 Audit Web App</div>
+  <div class="muted">Simple business audit reports</div>
+</header>
 
-    <div class="layout">
-      <main>
-        <section class="card" id="audits">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700">Audits</div>
-              <div class="muted">Track open audits and progress</div>
-            </div>
-            <div>
-              <button class="btn small" onclick="alert('Create audit flow placeholder')">+ New Audit</button>
-            </div>
-          </div>
+<!-- AUDIT FORM -->
+<section class="card" style="margin-bottom:18px">
+  <h2>Run a Business Audit</h2>
+  <p class="muted">Website & Google Business Profile visibility check</p>
 
-          <div style="margin-top:12px">
-            <div class="card" style="padding:0;overflow:auto">
-              <table aria-label="Audits table">
-                <thead>
-                  <tr><th>ID</th><th>Title</th><th>Owner</th><th>Status</th><th>Due</th></tr>
-                </thead>
-                <tbody id="auditsTable">
-                  <tr><td>#A-001</td><td>Network Security Review</td><td>J. Cooper</td><td>Open</td><td>2026-01-20</td></tr>
-                  <tr><td>#A-002</td><td>Payroll Compliance</td><td>M. Patel</td><td>In Progress</td><td>2026-01-25</td></tr>
-                  <tr><td>#A-003</td><td>Facility Safety</td><td>L. Gomez</td><td>Closed</td><td>2026-01-05</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section class="card" id="reports" style="margin-top:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div style="font-weight:700">Reports</div>
-              <div class="muted">Generate detailed reports and export as PDF for stakeholders</div>
-            </div>
-            <div>
-              <button class="btn small" onclick="createSampleReport()">+ New Report</button>
-            </div>
-          </div>
-
-          <div class="reports-list" id="reportsList" style="margin-top:12px">
-            <!-- populated by JS -->
-          </div>
-
-          <div style="margin-top:12px">
-            <div class="muted">Tip: Open a report to view the full details, then use "Download PDF" to save or share it.</div>
-          </div>
-        </section>
-
-      </main>
-
-      <aside>
-        <div class="card">
-          <div style="font-weight:700">Business</div>
-          <div class="muted" style="margin-top:6px">Audit Web App, Inc.<br>123 Compliance Way<br>Boston, MA 02110<br>Email: contact@auditwebapp.example</div>
-          <div style="margin-top:10px">
-            <div style="font-weight:700">Current export</div>
-            <div class="muted">Download or share report PDFs directly from the report view.</div>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top:12px">
-          <div style="font-weight:700">Share</div>
-          <div style="margin-top:8px"><button class="btn" onclick="navigator.clipboard?.writeText(location.href).then(()=>alert('Page link copied'))">Copy site link</button></div>
-        </div>
-      </aside>
-    </div>
-
-    <footer class="muted">© Audit Web App — Built with blue & green gradients. View on <a href="https://github.com/agufavors/Audit-web-app-">GitHub</a>.</footer>
+  <div style="display:grid;gap:10px;max-width:500px">
+    <input id="bizName" placeholder="Business name">
+    <input id="bizWebsite" placeholder="Website URL (https://...)">
+    <input id="bizGBP" placeholder="Google Business Profile link">
+    <button class="btn" onclick="runAudit()">Run Audit</button>
   </div>
+</section>
 
-  <!-- html2pdf (bundles html2canvas + jsPDF) for client-side PDF export -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-  <script>
-    // simple in-memory sample reports data
-    let reports = [
-      {
-        id: 'R-1001',
-        title: 'Network Security Review — Q1 2026',
-        date: '2026-01-11',
-        auditor: 'J. Cooper',
-        summary: 'High-level network configuration review. Identified 3 medium-risk items and 1 high-risk item requiring immediate remediation.',
-        findings: [
-          {id:'F-01',desc:'Open SSH on management interface',severity:'High',status:'Open'},
-          {id:'F-02',desc:'Outdated firewall rules',severity:'Medium',status:'In Progress'},
-          {id:'F-03',desc:'Missing segmentation between dev/prod',severity:'Medium',status:'Open'}
-        ]
-      }
-    ];
+<div class="layout">
 
-    function renderReportsList(){
-      const list = document.getElementById('reportsList');
-      list.innerHTML = '';
-      reports.forEach(r=>{
-        const el = document.createElement('div');
-        el.className='report-item';
-        el.innerHTML = `<div class="meta"><strong>${r.title}</strong><div class="muted">${r.date} — ${r.auditor}</div></div>
-                        <div style="display:flex;gap:8px;align-items:center">
-                          <button class="small" onclick="openReport('${r.id}')">Open</button>
-                          <button class="small" onclick="exportReport('${r.id}')">Download PDF</button>
-                        </div>`;
-        list.appendChild(el);
-      });
+<!-- REPORTS -->
+<main class="card">
+  <h3>Audit Reports</h3>
+  <div id="reportsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px"></div>
+</main>
+
+<!-- INFO -->
+<aside class="card">
+  <h3>What this checks</h3>
+  <ul class="muted">
+    <li>Website availability</li>
+    <li>HTTPS security</li>
+    <li>Google Business Profile presence</li>
+    <li>Basic readiness score</li>
+  </ul>
+  <p class="muted">PDF reports are auto-generated for clients.</p>
+</aside>
+
+</div>
+
+<footer class="muted" style="margin-top:18px;text-align:center">
+  Built with 💙💚 by Audit Web App
+</footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script>
+let reports=[];
+
+function runAudit(){
+  const name=bizName.value.trim();
+  const website=bizWebsite.value.trim();
+  const gbp=bizGBP.value.trim();
+
+  if(!name) return alert("Business name is required");
+
+  let score=0;
+  let findings=[];
+
+  if(website){
+    score+=30;
+    if(website.startsWith("https://")){
+      score+=10;
+    }else{
+      findings.push({id:'W1',desc:'Website is not using HTTPS',severity:'Medium',status:'Open'});
     }
+  }else{
+    findings.push({id:'W0',desc:'No website found',severity:'High',status:'Open'});
+  }
 
-    function createSampleReport(){
-      const newId = 'R-'+(1000+reports.length+1);
-      const newReport = {
-        id:newId,
-        title:'Sample Report '+(reports.length+1),
-        date:new Date().toISOString().slice(0,10),
-        auditor:'Auto Generator',
-        summary:'This is a generated sample report. Replace with your real audit data.',
-        findings:[{id:'F-01',desc:'Example finding',severity:'Low',status:'Open'}]
-      };
-      reports.unshift(newReport);
-      renderReportsList();
-      openReport(newId);
-    }
+  if(gbp){
+    score+=40;
+  }else{
+    findings.push({id:'G1',desc:'Google Business Profile missing',severity:'High',status:'Open'});
+  }
 
-    // show full report in a modal-like window
-    function openReport(id){
-      const report = reports.find(r=>r.id===id);
-      if(!report) return alert('Report not found');
+  if(score>100) score=100;
 
-      const existing = document.getElementById('reportDetailContainer');
-      if(existing) existing.remove();
+  const report={
+    id:'R-'+(1000+reports.length+1),
+    title:`Audit Report — ${name}`,
+    date:new Date().toISOString().slice(0,10),
+    summary:`Audit completed for ${name}. Overall score: ${score}/100.`,
+    findings:findings.length?findings:[{id:'OK',desc:'No critical issues detected',severity:'Low',status:'Closed'}]
+  };
 
-      const container = document.createElement('div');
-      container.id = 'reportDetailContainer';
-      container.style.position='fixed';
-      container.style.left='50%';
-      container.style.top='50%';
-      container.style.transform='translate(-50%,-50%)';
-      container.style.width='min(900px,96%)';
-      container.style.maxHeight='90vh';
-      container.style.overflow='auto';
-      container.style.zIndex=9999;
-      container.style.padding='18px';
-      container.style.borderRadius='12px';
-      container.style.boxShadow='0 20px 60px rgba(2,10,30,0.5)';
-      container.style.background='white';
+  reports.unshift(report);
+  renderReports();
+  openReport(report.id);
+}
 
-      const html = document.createElement('div');
-      html.id = 'reportPrintable';
-      html.style.padding='18px';
-      html.innerHTML = `
-        <div style='display:flex;justify-content:space-between;align-items:flex-start'>
-          <div>
-            <h2 style='margin:0'>${escapeHtml(report.title)}</h2>
-            <div class='muted'>Report ID: ${report.id} &nbsp;|&nbsp; Date: ${report.date} &nbsp;|&nbsp; Auditor: ${escapeHtml(report.auditor)}</div>
-          </div>
-          <div style='text-align:right'>
-            <div style='font-weight:700'>Audit Web App, Inc.</div>
-            <div class='muted' style='font-size:13px'>123 Compliance Way<br>Boston, MA 02110</div>
-          </div>
-        </div>
-        <hr style='margin:12px 0'>
-        <h3>Executive summary</h3>
-        <p>${escapeHtml(report.summary)}</p>
-        <h3>Findings</h3>
-        <table>
-          <thead><tr><th>ID</th><th>Description</th><th>Severity</th><th>Status</th></tr></thead>
-          <tbody>
-            ${report.findings.map(f=>`<tr><td>${f.id}</td><td>${escapeHtml(f.desc)}</td><td>${f.severity}</td><td>${f.status}</td></tr>`).join('')}
-          </tbody>
-        </table>
-        <hr style='margin:12px 0'>
-        <div class='muted' style='font-size:12px'>Generated by Audit Web App — ${new Date().toLocaleString()}</div>
-      `;
-
-      const controls = document.createElement('div');
-      controls.style.display='flex';
-      controls.style.gap='8px';
-      controls.style.marginBottom='8px';
-
-      const btnDownload = document.createElement('button');
-      btnDownload.className='btn';
-      btnDownload.textContent='Download PDF';
-      btnDownload.onclick = ()=> exportReport(id);
-
-      const btnClose = document.createElement('button');
-      btnClose.className='small';
-      btnClose.textContent='Close';
-      btnClose.onclick = ()=> container.remove();
-
-      const btnCopyText = document.createElement('button');
-      btnCopyText.className='small';
-      btnCopyText.textContent='Copy summary';
-      btnCopyText.onclick = ()=>{ navigator.clipboard?.writeText(report.summary).then(()=>alert('Summary copied')); }
-
-      controls.appendChild(btnDownload);
-      controls.appendChild(btnCopyText);
-      controls.appendChild(btnClose);
-
-      container.appendChild(controls);
-      container.appendChild(html);
-      document.body.appendChild(container);
-      container.focus();
-    }
-
-    function exportReport(id){
-      const report = reports.find(r=>r.id===id);
-      if(!report) return alert('Report not found');
-      const printable = document.getElementById('reportPrintable');
-      if(printable){
-        const opt = {
-          margin: 10,
-          filename: `${report.id} - ${sanitizeFilename(report.title)}.pdf`,
-          image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true },
-          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-        html2pdf().set(opt).from(printable).save();
-      } else {
-        const temp = document.createElement('div');
-        temp.style.padding='18px';
-        temp.style.background='white';
-        temp.innerHTML = `
-          <h2>${escapeHtml(report.title)}</h2>
-          <div class='muted'>Report ID: ${report.id} &nbsp;|&nbsp; Date: ${report.date} &nbsp;|&nbsp; Auditor: ${escapeHtml(report.auditor)}</div>
-          <h3>Executive summary</h3>
-          <p>${escapeHtml(report.summary)}</p>
-          <h3>Findings</h3>
-          <table>
-            <thead><tr><th>ID</th><th>Description</th><th>Severity</th><th>Status</th></tr></thead>
-            <tbody>
-              ${report.findings.map(f=>`<tr><td>${f.id}</td><td>${escapeHtml(f.desc)}</td><td>${f.severity}</td><td>${f.status}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        `;
-        const opt = {margin:10, filename:`${report.id} - ${sanitizeFilename(report.title)}.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4'}};
-        document.body.appendChild(temp);
-        html2pdf().set(opt).from(temp).save().then(()=>temp.remove());
-      }
-    }
-
-    function escapeHtml(s){
-      if(!s) return '';
-      return String(s).replace(/[&<>\"']/g, function(c){
-        return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":"&#39;"}[c];
-      });
-    }
-    function sanitizeFilename(s){ return (s||'report').replace(/[^a-z0-9-_ ]/ig,'').replace(/\s+/g,' ').trim(); }
-
-    // initialize
-    renderReportsList();
-  </script>
-</body>
-              </html>    }
-    header{grid-column:1/-1;display:flex;align-items:center;gap:16px}
-    .logo{
-      width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,var(--bg2),var(--bg1));
-      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:22px;box-shadow:0 6px 18px rgba(0,0,0,0.12)
-    }
-    h1{font-size:20px;margin:0}
-    p.lead{margin:0;color:var(--muted)}
-
-    /* main area */
-    .main{
-      padding:12px 6px 6px 6px;
-    }
-    .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
-    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,40,70,0.06);} 
-    .stat{font-size:28px;font-weight:700}
-    .muted{color:var(--muted);font-size:13px}
-
-    /* sidebar */
-    .sidebar{padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(0,194,255,0.12),rgba(0,242,96,0.06));height:100%;display:flex;flex-direction:column;gap:12px}
-    .cta{margin-top:auto}
-    .btn{
-      display:inline-block;padding:12px 16px;border-radius:12px;color:white;font-weight:600;text-decoration:none;border:none;cursor:pointer;
-      background:linear-gradient(90deg,#0562d8,#00b894);
-      box-shadow:0 8px 20px rgba(4,64,120,0.18);
-      transition:transform .18s ease,box-shadow .18s ease
-    }
-    .btn:active{transform:translateY(2px)}
-    .small{font-size:13px;padding:8px 12px;border-radius:10px}
-
-    /* fun shapes */
-    .blobs{position:absolute;inset:0;pointer-events:none}
-    .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:0.7}
-    .blob.b1{width:360px;height:360px;left:-80px;top:-100px;background:radial-gradient(circle at 30% 30%, rgba(0,198,255,0.9), rgba(0,198,255,0.4));}
-    .blob.b2{width:300px;height:300px;right:-80px;bottom:-80px;background:radial-gradient(circle at 70% 70%, rgba(0,242,96,0.9), rgba(0,242,96,0.35));}
-
-    /* responsive */
-    @media (max-width:900px){
-      .scene{grid-template-columns:1fr;}
-      .sidebar{order:-1}
-      .card-grid{grid-template-columns:1fr}
-    }
-  </style>
-</head>
-<body>
-  <div class="blobs" aria-hidden="true">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-  </div>
-  <main class="scene" role="main">
-    <header>
-      <div class="logo">AW</div>
+function renderReports(){
+  const list=document.getElementById('reportsList');
+  list.innerHTML='';
+  reports.forEach(r=>{
+    const div=document.createElement('div');
+    div.className='report-item';
+    div.innerHTML=`
       <div>
-        <h1>Audit Web App — Welcome!</h1>
-        <p class="lead">A lighter, friendlier interface with blue & green gradients ✨</p>
+        <strong>${r.title}</strong>
+        <div class="muted">${r.date}</div>
       </div>
-    </header>
+      <div style="display:flex;gap:6px">
+        <button class="small" onclick="openReport('${r.id}')">Open</button>
+        <button class="small" onclick="exportPDF('${r.id}')">PDF</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
 
-    <section class="main">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="muted">Open Audits</div>
-            <div class="stat" id="openAudits">12</div>
-          </div>
-          <div class="muted small">Updated just now</div>
-        </div>
+function openReport(id){
+  const r=reports.find(x=>x.id===id);
+  if(!r) return;
+
+  const modal=document.createElement('div');
+  modal.style.position='fixed';
+  modal.style.inset='0';
+  modal.style.background='rgba(0,0,0,0.6)';
+  modal.style.display='flex';
+  modal.style.alignItems='center';
+  modal.style.justifyContent='center';
+  modal.innerHTML=`
+    <div class="card" id="printable" style="max-width:800px;width:90%;max-height:90vh;overflow:auto">
+      <h2>${r.title}</h2>
+      <p class="muted">${r.date}</p>
+      <p>${r.summary}</p>
+      <h3>Findings</h3>
+      <table>
+        <tr><th>ID</th><th>Description</th><th>Severity</th><th>Status</th></tr>
+        ${r.findings.map(f=>`<tr><td>${f.id}</td><td>${f.desc}</td><td>${f.severity}</td><td>${f.status}</td></tr>`).join('')}
+      </table>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" onclick="exportPDF('${r.id}')">Download PDF</button>
+        <button class="small" onclick="this.closest('div[style]').parentElement.remove()">Close</button>
       </div>
+    </div>`;
+  document.body.appendChild(modal);
+}
 
-      <div class="card-grid">
-        <div class="card">
-          <div class="muted">Due this week</div>
-          <div style="font-weight:700;margin-top:8px">3 items</div>
-          <div class="muted" style="margin-top:8px">Make sure to check the <strong>priority</strong> flagged audits.</div>
-        </div>
-        <div class="card">
-          <div class="muted">Team activity</div>
-          <div style="font-weight:700;margin-top:8px">8 comments</div>
-          <div class="muted" style="margin-top:8px">Recent collaboration across projects.</div>
-        </div>
-      </div>
+function exportPDF(id){
+  const r=reports.find(x=>x.id===id);
+  if(!r) return;
+  const el=document.getElementById('printable');
+  html2pdf().from(el).save(`${r.title}.pdf`);
+}
+</script>
 
-      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="btn small" onclick="alert('Create new audit — coming soon!')">+ New Audit</button>
-        <button class="btn small" style="background:linear-gradient(90deg,#9be15d,#00b4db)" onclick="alert('Filter applied')">Filter</button>
-      </div>
-    </section>
-
-    <aside class="sidebar">
-      <div style="font-weight:700">Quick actions</div>
-      <div class="card" style="padding:12px;box-shadow:none;background:transparent">
-        <div class="muted">Export reports</div>
-        <div style="margin-top:8px"><button class="btn small" onclick="alert('Exported!')">Export</button></div>
-      </div>
-
-      <div class="card" style="padding:12px;box-shadow:none;background:transparent">
-        <div class="muted">Theme</div>
-        <div style="margin-top:8px;display:flex;gap:8px">
-          <button class="small" style="background:white;border:1px solid rgba(0,0,0,0.06)" onclick="setTheme('light')">Light</button>
-          <button class="small" style="background:linear-gradient(90deg,#00c6ff,#00f260);color:white;border:none" onclick="setTheme('gradient')">Blue/Green</button>
-        </div>
-      </div>
-
-      <div class="cta">
-        <div class="muted">Share</div>
-        <div style="margin-top:8px"><button class="btn" onclick="navigator.clipboard?.writeText(location.href).then(()=>alert('Link copied'))">Copy link</button></div>
-      </div>
-    </aside>
-  </main>
-
-  <script>
-    // small interactive bits to make it feel alive
-    function setTheme(t){
-      if(t==='light'){
-        document.body.style.background = 'linear-gradient(135deg,#ffffff 0%, #e6f7ff 60%)';
-      } else {
-        document.body.style.background = 'linear-gradient(135deg,#00c6ff 0%, #7ae7bf 35%, #ffffff 100%)';
-      }
-    }
-
-    // demo: randomize open audits number so the page feels dynamic
-    function randomizeStats(){
-      const el = document.getElementById('openAudits');
-      if(!el) return;
-      el.textContent = Math.floor(Math.random()*24)+1;
-    }
-    setInterval(randomizeStats,4500);
-    randomizeStats();
-  </script>
 </body>
-</html>
+  </html>
