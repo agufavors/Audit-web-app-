@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Visibility Snapshot — Quick Audit</title>
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2;
+    --accent:#34b399; --accent-2:#60a5fa; --warn:#f59e0b;
+    --glass: rgba(255,255,255,0.03);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%; margin:0; background:linear-gradient(180deg,#071025 0%, #081225 100%); color:#e6eef6;}
+  .wrap{max-width:960px;margin:28px auto;padding:20px;}
+  header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  header h1{font-size:20px;margin:0}
+  .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 6px 18px rgba(3,7,18,0.6)}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input[type=text], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+  .row{display:flex;gap:12px}
+  .col{flex:1}
+  .small{font-size:13px;color:var(--muted)}
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#022; padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+  .score-ring{display:flex;align-items:center;gap:16px}
+  .ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:4px solid rgba(255,255,255,0.03)}
+  .score{font-size:22px;font-weight:700}
+  .status{font-weight:700}
+  ul.recs{padding-left:18px;margin:8px 0}
+  .muted-note{color:var(--muted);font-size:13px}
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:9px 12px;border-radius:10px;cursor:pointer}
+  footer{margin-top:12px;color:var(--muted);font-size:13px;text-align:center}
+  @media(max-width:720px){
+    .row{flex-direction:column}
+    .score-ring{gap:8px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Visibility Snapshot</h1>
+        <div class="small">Quick audit to check how easy your business is to find on Google</div>
+      </div>
+    </header>
+
+    <form id="auditForm" class="card" onsubmit="event.preventDefault(); runAudit();">
+      <div class="row">
+        <div class="col">
+          <label>Business name</label>
+          <input id="businessName" type="text" placeholder="e.g. Aisha Tailors">
+        </div>
+        <div class="col">
+          <label>Category</label>
+          <select id="category">
+            <option value="retail">Retail / Shop</option>
+            <option value="service">Service (Tailor, Barber)</option>
+            <option value="food">Food / Restaurant</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="row">
+        <div class="col">
+          <label>City / Area served</label>
+          <input id="area" type="text" placeholder="e.g. Surulere, Lagos">
+        </div>
+        <div class="col">
+          <label>Do you have a physical location?</label>
+          <select id="physical">
+            <option value="yes">Yes — customers visit</option>
+            <option value="no">No — mobile / delivery</option>
+            <option value="maybe">I sometimes stay in town</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="row">
+        <div class="col">
+          <label>Google Business Profile?</label>
+          <select id="gbp">
+            <option value="yes">Yes — claimed</option>
+            <option value="not-sure">Not sure</option>
+            <option value="no">No / not claimed</option>
+          </select>
+        </div>
+        <div class="col">
+          <label>Website?</label>
+          <select id="website">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card" style="padding:12px;">
+        <label>How do customers usually find you?</label>
+        <select id="findsBy">
+          <option value="referrals">Referrals / Word of mouth</option>
+          <option value="google">Google / Maps</option>
+          <option value="social">Social media</option>
+          <option value="mixed">Mixed / Not sure</option>
+        </select>
+
+        <div style="height:10px"></div>
+        <label class="small">Active online presence (photos, reviews)</label>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button type="button" class="ghost" id="photosBtn" onclick="toggle('photosBtn')">Has photos</button>
+          <button type="button" class="ghost" id="reviewsBtn" onclick="toggle('reviewsBtn')">Has reviews</button>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" type="submit">Run quick check</button>
+        <button class="ghost" type="button" onclick="resetForm()">Reset</button>
+        <div class="muted-note" style="margin-left:auto">No data is sent anywhere — this is a local quick check.</div>
+      </div>
+    </form>
+
+    <div id="resultArea" style="display:none" class="card" aria-live="polite">
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1 1 260px">
+          <div class="score-ring">
+            <div class="ring" id="ring" aria-hidden="true">
+              <div class="score" id="scoreVal">0</div>
+              <div style="font-size:12px;color:var(--muted)">/100</div>
+            </div>
+            <div>
+              <div class="status" id="scoreDesc">Low visibility</div>
+              <div class="small muted-note" id="scoreNote">What this means</div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div>
+            <div class="small" style="margin-bottom:6px">Google Visibility Snapshot</div>
+            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));padding:12px;border-radius:10px">
+              <div><strong>Profile claimed:</strong> <span id="claimed">Unknown</span></div>
+              <div><strong>Search visibility:</strong> <span id="searchVis">Low</span></div>
+              <div><strong>Maps visibility:</strong> <span id="mapsVis">Low</span></div>
+              <div><strong>Trust signals:</strong> <span id="trust">Missing</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="flex:1 1 320px">
+          <div class="small" style="margin-bottom:6px">Top issues (what's blocking visibility)</div>
+          <ul id="issues" class="recs"></ul>
+
+          <div style="height:10px"></div>
+          <div class="small" style="margin-bottom:6px">Recommendations</div>
+          <ul id="recoList" class="recs"></ul>
+
+          <div style="height:12px"></div>
+          <div class="cta-row">
+            <button class="btn" id="helpBtn">Request help — quick setup</button>
+            <button class="ghost" id="shareBtn">Copy short report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="muted-note">Designed for quick, local-friendly visibility checks — works offline in the browser.</footer>
+  </div>
+
+<script>
+  // Toggle small state buttons
+  function toggle(id){
+    const el = document.getElementById(id);
+    el.classList.toggle('active');
+    if(el.classList.contains('active')){
+      el.style.borderColor = 'rgba(52,179,153,0.2)';
+      el.style.background = 'linear-gradient(90deg, rgba(52,179,153,0.08), rgba(96,165,250,0.04))';
+      el.dataset.on = '1';
+    } else {
+      el.style.borderColor = 'rgba(255,255,255,0.06)';
+      el.style.background = 'transparent';
+      el.dataset.on = '0';
+    }
+  }
+
+  function resetForm(){
+    document.getElementById('auditForm').reset();
+    ['photosBtn','reviewsBtn'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.classList.remove('active');
+      el.dataset.on = '0';
+      el.style.background='transparent';
+      el.style.borderColor='rgba(255,255,255,0.06)';
+    });
+    document.getElementById('resultArea').style.display='none';
+  }
+
+  function runAudit(){
+    // Read inputs
+    const name = (document.getElementById('businessName').value || 'Your business').trim();
+    const area = (document.getElementById('area').value || '').trim();
+    const gbp = document.getElementById('gbp').value; // yes / not-sure / no
+    const website = document.getElementById('website').value; // yes / no
+    const physical = document.getElementById('physical').value; // yes / no / maybe
+    const findsBy = document.getElementById('findsBy').value; // referrals / google / social / mixed
+    const photos = document.getElementById('photosBtn').dataset.on === '1';
+    const reviews = document.getElementById('reviewsBtn').dataset.on === '1';
+
+    // Scoring weights (adjust here if needed)
+    const weights = {
+      gbp: 40,    // claimed profile presence
+      website: 20,
+      physical: 10,
+      findsByGoogle: 15,
+      activePresence: 15  // photos/reviews
+    };
+
+    // Calculate score
+    let score = 0;
+    if(gbp === 'yes') score += weights.gbp;
+    else if(gbp === 'not-sure') score += Math.round(weights.gbp * 0.4);
+
+    if(website === 'yes') score += weights.website;
+    if(physical === 'yes') score += weights.physical;
+    else if(physical === 'maybe') score += Math.round(weights.physical * 0.5);
+
+    if(findsBy === 'google') score += weights.findsByGoogle;
+    else if(findsBy === 'mixed') score += Math.round(weights.findsByGoogle * 0.5);
+
+    // active presence: photos and/or reviews
+    if(photos && reviews) score += weights.activePresence;
+    else if(photos || reviews) score += Math.round(weights.activePresence * 0.6);
+
+    if(score > 100) score = 100;
+
+    // Interpret score
+    let desc = 'Low visibility';
+    let note = 'Your business is hard to find on Google.';
+    if(score >= 75){
+      desc = 'Good visibility';
+      note = 'Your business shows up clearly for local searches.';
+    } else if(score >= 40){
+      desc = 'Moderate visibility';
+      note = 'Some things are working, but key gaps remain.';
+    }
+
+    // Snapshot items
+    const claimedText = (gbp === 'yes') ? 'Claimed' : (gbp === 'not-sure' ? 'Needs review' : 'Not claimed');
+    const trust = (photos || reviews) ? (reviews ? 'Has reviews' : 'Has photos') : 'Missing';
+    const searchVis = (score >= 75) ? 'High' : (score >= 40 ? 'Medium' : 'Low');
+    const mapsVis = (score >= 60) ? 'Visible' : (score >= 30 ? 'Partially visible' : 'Hidden');
+
+    // Top issues (simple rules)
+    const issues = [];
+    if(gbp === 'no') issues.push('Google Business Profile not claimed.');
+    if(gbp === 'not-sure') issues.push('Google profile needs checking/claiming.');
+    if(website === 'no') issues.push('No website present (helps trust).');
+    if(!(photos || reviews)) issues.push('Few or no photos/reviews to build trust.');
+    if(physical !== 'yes') issues.push('Limited physical presence — make contact details and service area clear.');
+    if(findsBy === 'referrals') issues.push('Relying on referrals — online visibility can capture new customers.');
+
+    if(issues.length === 0) issues.push('No obvious blockers detected from the quick info.');
+
+    // Recommendations (short)
+    const recs = [];
+    if(gbp !== 'yes') recs.push('Claim and complete your Google Business Profile (name, address, hours, photos).');
+    if(!photos) recs.push('Add clear photos of your place, products or work samples.');
+    if(!reviews) recs.push('Encourage a few customers to leave short reviews.');
+    if(website === 'no') recs.push('Add at least a simple website or link page with contact details.');
+    recs.push('Keep your profile updated regularly (posts, photos).');
+
+    // Render results
+    document.getElementById('scoreVal').textContent = score;
+    document.getElementById('scoreDesc').textContent = desc;
+    document.getElementById('scoreNote').textContent = note;
+    document.getElementById('claimed').textContent = claimedText;
+    document.getElementById('trust').textContent = trust;
+    document.getElementById('searchVis').textContent = searchVis;
+    document.getElementById('mapsVis').textContent = mapsVis;
+
+    const issuesEl = document.getElementById('issues');
+    issuesEl.innerHTML = '';
+    issues.forEach(it=>{
+      const li = document.createElement('li');
+      li.textContent = it;
+      issuesEl.appendChild(li);
+    });
+
+    const recoEl = document.getElementById('recoList');
+    recoEl.innerHTML = '';
+    recs.forEach(it=>{
+      const li = document.createElement('li');
+      li.textContent = it;
+      recoEl.appendChild(li);
+    });
+
+    // Show result area
+    document.getElementById('resultArea').style.display = 'block';
+
+    // Prepare shareable short report for copy button
+    const shortReport = `${name} (${area}) — Visibility score: ${score}/100\nIssues: ${issues.join(' | ')}\nTop fix: ${recs[0]}\nContact me to set this up.`;
+    document.getElementById('shareBtn').onclick = ()=> {
+      navigator.clipboard?.writeText(shortReport).then(()=> {
+        alert('Short report copied. You can paste it in WhatsApp or save it.');
+      }).catch(()=> {
+        prompt('Copy this report:', shortReport);
+      });
+    };
+
+    // Help button opens prefilled WhatsApp message (change phone if you want)
+    document.getElementById('helpBtn').onclick = ()=> {
+      const phone = ''; // optional: add country code + phone number if you want to open direct chat
+      const message = encodeURIComponent(`Hi, I ran a quick check for ${name}. Score ${score}/100. I can help set this up so customers can find you on Google. Are you interested?`);
+      const url = phone ? `https://wa.me/${phone}?text=${message}` : `https://api.whatsapp.com/send?text=${message}`;
+      window.open(url, '_blank');
+    };
+  }
+</script>
+</body>
+  </html>
