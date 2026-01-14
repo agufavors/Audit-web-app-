@@ -32,7 +32,7 @@ input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px 
 .small{font-size:13px;padding:7px 10px;border-radius:9px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
 .btn{padding:10px 12px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#042c2b;font-weight:700;cursor:pointer}
 .result-hero{display:flex;gap:18px;align-items:center}
-.ring{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), rgba(0,0,0,0.15));display:grid;place-items:center;border:5px solid rgba(255,255,255,0.03)}
+.ring{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), rgba(0,0,0,0.15));display:grid;place-items:center;border:5px solid rgba(255,255,255[...]
 .score{font-size:20px;font-weight:800;color:var(--accent1)}
 .score-sub{font-size:12px;color:var(--muted)}
 .snapshot{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-top:12px;color:#eaf7f6}
@@ -80,7 +80,6 @@ input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px 
               <div style="font-weight:700">Run a quick audit</div>
               <div class="note">Fill the details you know. We'll infer visibility and recommend fixes.</div>
             </div>
-            <div><button class="btn" onclick="runCheck()">Run check</button></div>
           </div>
 
           <div style="margin-top:12px">
@@ -93,7 +92,7 @@ input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px 
                 <label>Category</label>
                 <select id="category">
                   <option>Retail / Shop</option>
-                  <option>Service (Tailor, Barber)</option>
+                  <option>Service</option>
                   <option>Food / Restaurant</option>
                   <option>Other</option>
                 </select>
@@ -142,14 +141,7 @@ input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px 
               </div>
             </div>
 
-            <div style="margin-top:10px">
-              <label>SEO basics (tick what applies)</label>
-              <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-                <button type="button" id="seo_meta" class="chip" onclick="toggleChip('seo_meta')">Meta description</button>
-                <button type="button" id="seo_mobile" class="chip" onclick="toggleChip('seo_mobile')">Mobile friendly</button>
-                <button type="button" id="seo_sitemap" class="chip" onclick="toggleChip('seo_sitemap')">Has sitemap</button>
-              </div>
-            </div>
+            <!-- SEO basics removed as requested -->
 
             <div style="margin-top:12px">
               <label>Trust signals</label>
@@ -161,6 +153,10 @@ input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px 
 
             <div style="margin-top:12px" class="note">
               Tip: If you don't know an item, leave it blank — the snapshot will highlight what to check next.
+            </div>
+
+            <div style="margin-top:14px;text-align:right">
+              <button class="btn" onclick="runCheck()">Run check</button>
             </div>
           </div>
         </div>
@@ -266,9 +262,6 @@ function runCheck(){
   const website = escapeText(document.getElementById('website').value);
   const gbp = escapeText(document.getElementById('gbp').value);
   const findsBy = document.getElementById('findsBy').value;
-  const seo_meta = chipOn('seo_meta');
-  const seo_mobile = chipOn('seo_mobile');
-  const seo_sitemap = chipOn('seo_sitemap');
   const photos = chipOn('hasPhotos');
   const reviews = chipOn('hasReviews');
 
@@ -282,7 +275,6 @@ function runCheck(){
     website: 20,
     https: 10,
     domain: 10,
-    seo: 10,
     photosReviews: 15,
     cac: 10
   };
@@ -334,17 +326,6 @@ function runCheck(){
   } else {
     // optional—suggest domain
     recs.push('Consider getting a simple domain (e.g., yourshop.com) to boost trust.');
-  }
-
-  // SEO basics
-  let seoCount = 0;
-  if(seo_meta) { seoCount++; }
-  if(seo_mobile) { seoCount++; }
-  if(seo_sitemap) { seoCount++; }
-  if(seoCount > 0){
-    score += Math.round(weights.seo * (seoCount / 3));
-  } else {
-    recs.push('Add a meta description & ensure your site is mobile-friendly for better visibility.');
   }
 
   // photos & reviews
@@ -439,7 +420,7 @@ function runCheck(){
   };
 
   document.getElementById('helpBtn').onclick = ()=> {
-    const msg = encodeURIComponent(`Hi, I ran a visibility snapshot for ${name || 'your business'} (${area || '—'}). Score ${score}/100. I can help set this up and improve visibility. Are you open to a quick chat?`);
+    const msg = encodeURIComponent(`Hi, I ran a visibility snapshot for ${name || 'your business'} (${area || '—'}). Score ${score}/100. I can help set this up and improve visibility. Are you open t[...]
     const url = REQUEST_HELP_PHONE ? `https://wa.me/${REQUEST_HELP_PHONE}?text=${msg}` : `https://api.whatsapp.com/send?text=${msg}`;
     window.open(url,'_blank');
   };
@@ -451,4 +432,4 @@ function escapeText(s){ return (s||'').toString().replace(/[&<>"]/g, function(c)
 /* init: make some chips active by default? (no) */
 </script>
 </body>
-</html>
+            </html>
