@@ -1,257 +1,454 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Visibility Audit Tool</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Visibility Snapshot — Audit (CAC, GBP, SEO)</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --blue:#00c6ff;
-  --green:#00f260;
-  --purple:#9b5de5;
-  --orange:#f15bb5;
-  --card:#ffffffdd;
-  --muted:#555;
-  font-family:'Poppins',sans-serif;
+:root{
+  --bg1:#071426; --panel:#072b34;
+  --accent1:#19d3b8; --accent2:#5dd1ff; --warm:#ffd166;
+  --card:#0b2030; --muted:#9fb3bf; --glass: rgba(255,255,255,0.03);
+  font-family:'Poppins',system-ui,-apple-system,"Segoe UI",Roboto,Arial;
 }
-body{
-  margin:0;
-  background:linear-gradient(135deg,var(--blue),var(--green));
-  min-height:100vh;
-  padding:24px;
-}
-.container{
-  max-width:1100px;
-  margin:auto;
-}
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:18px;
-  color:white;
-}
-.logo{
-  font-weight:700;
-  font-size:24px;
-}
-.btn{
-  border:none;
-  padding:10px 14px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:600;
-  background:linear-gradient(90deg,var(--purple),var(--orange));
-  color:white;
-}
-.small{padding:6px 10px;font-size:13px}
-input{
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-family:inherit;
-}
-.card{
-  background:var(--card);
-  border-radius:14px;
-  padding:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
-.layout{
-  display:grid;
-  grid-template-columns:1fr 350px;
-  gap:18px;
-}
-.muted{color:var(--muted);font-size:14px}
-.report-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px;
-  border-radius:10px;
-  background:#f5fefe;
-  border:1px solid #e2f2f2;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  padding:8px;
-  border-bottom:1px solid #eee;
-  text-align:left;
-}
-@media(max-width:900px){
-  .layout{grid-template-columns:1fr}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),#03202a);color:#e6f6f5}
+.container{max-width:980px;margin:20px auto;padding:18px}
+.header{display:flex;align-items:center;gap:14px;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:grid;place-items:center;color:#002b33;font-weight:800;font-size:18px}
+.title{font-size:20px;font-weight:700}
+.subtitle{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 10px 30px rgba(2,10,20,0.6);border:1px solid rgba(255,255,255,0.02)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.full{grid-column:1/3}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+input[type="text"], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:14px}
+.toggle-row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted);cursor:pointer}
+.chip.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#012b2b;border:none}
+.small{font-size:13px;padding:7px 10px;border-radius:9px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
+.btn{padding:10px 12px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#042c2b;font-weight:700;cursor:pointer}
+.result-hero{display:flex;gap:18px;align-items:center}
+.ring{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.03), rgba(0,0,0,0.15));display:grid;place-items:center;border:5px solid rgba(255,255,255,0.03)}
+.score{font-size:20px;font-weight:800;color:var(--accent1)}
+.score-sub{font-size:12px;color:var(--muted)}
+.snapshot{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;margin-top:12px;color:#eaf7f6}
+.section{margin-top:14px}
+.section h3{margin:0 0 8px 0;color:var(--accent2);font-size:15px}
+.list{padding-left:16px;color:#d7f7f6;margin:0}
+.list li{margin-bottom:6px}
+.cta-row{display:flex;gap:10px;margin-top:12px}
+.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+.footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+
+/* sidebar */
+.sidebar .card{position:sticky;top:20px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.02)}
+.kv strong{color:#e6fff9}
+.note{color:var(--muted);font-size:13px}
+
+/* responsive */
+@media(max-width:920px){
+  .grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .full{grid-column:1/2}
 }
 </style>
 </head>
 <body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo">VS</div>
+        <div>
+          <div class="title">Visibility Snapshot</div>
+          <div class="subtitle">Quick CAC • GBP • Website • SEO checks — simple, honest</div>
+        </div>
+      </div>
+      <div class="note">No APIs — snapshots based on input & basic checks</div>
+    </div>
 
-<div class="container">
+    <div class="grid">
+      <!-- Main -->
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">Run a quick audit</div>
+              <div class="note">Fill the details you know. We'll infer visibility and recommend fixes.</div>
+            </div>
+            <div><button class="btn" onclick="runCheck()">Run check</button></div>
+          </div>
 
-<header>
-  <div class="logo">🔍 Visibility Audit</div>
-  <div class="muted">Check website & Google Business Profile</div>
-</header>
+          <div style="margin-top:12px">
+            <div class="form-row">
+              <div>
+                <label>Business name</label>
+                <input id="bizName" type="text" placeholder="e.g. Kachi's Collection">
+              </div>
+              <div>
+                <label>Category</label>
+                <select id="category">
+                  <option>Retail / Shop</option>
+                  <option>Service (Tailor, Barber)</option>
+                  <option>Food / Restaurant</option>
+                  <option>Other</option>
+                </select>
+              </div>
+            </div>
 
-<!-- Audit Form -->
-<section class="card" style="margin-bottom:18px">
-  <h2>Run Business Audit</h2>
-  <p class="muted">Check website & Google Business Profile visibility</p>
+            <div class="form-row">
+              <div>
+                <label>Location / Area served</label>
+                <input id="area" type="text" placeholder="City, State">
+              </div>
+              <div>
+                <label>CAC registered?</label>
+                <select id="cac">
+                  <option value="no">No</option>
+                  <option value="yes">Yes</option>
+                  <option value="not-sure">Not sure</option>
+                </select>
+              </div>
+            </div>
 
-  <div style="display:grid;gap:10px;max-width:500px">
-    <input id="bizName" placeholder="Business name">
-    <input id="bizWebsite" placeholder="Website URL (https://...)">
-    <input id="bizGBP" placeholder="Google Business Profile link">
-    <button class="btn" onclick="runAudit()">Run Audit</button>
+            <div class="form-row">
+              <div>
+                <label>Domain (optional)</label>
+                <input id="domain" type="text" placeholder="example.com">
+              </div>
+              <div>
+                <label>Website URL (optional)</label>
+                <input id="website" type="text" placeholder="https://example.com">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>Google Business Profile (link or status)</label>
+                <input id="gbp" type="text" placeholder="Paste GBP link or write 'claimed' / 'not claimed'">
+              </div>
+              <div>
+                <label>How customers find you</label>
+                <select id="findsBy">
+                  <option value="referrals">Referrals / word of mouth</option>
+                  <option value="google">Google / Maps</option>
+                  <option value="social">Social media</option>
+                  <option value="mixed">Mixed / Not sure</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label>SEO basics (tick what applies)</label>
+              <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                <button type="button" id="seo_meta" class="chip" onclick="toggleChip('seo_meta')">Meta description</button>
+                <button type="button" id="seo_mobile" class="chip" onclick="toggleChip('seo_mobile')">Mobile friendly</button>
+                <button type="button" id="seo_sitemap" class="chip" onclick="toggleChip('seo_sitemap')">Has sitemap</button>
+              </div>
+            </div>
+
+            <div style="margin-top:12px">
+              <label>Trust signals</label>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <button type="button" id="hasPhotos" class="chip" onclick="toggleChip('hasPhotos')">Has photos</button>
+                <button type="button" id="hasReviews" class="chip" onclick="toggleChip('hasReviews')">Has reviews</button>
+              </div>
+            </div>
+
+            <div style="margin-top:12px" class="note">
+              Tip: If you don't know an item, leave it blank — the snapshot will highlight what to check next.
+            </div>
+          </div>
+        </div>
+
+        <!-- Result area -->
+        <div id="resultCard" class="card" style="margin-top:14px;display:none">
+          <div class="result-hero">
+            <div class="ring"><div class="score" id="scoreVal">0</div></div>
+            <div>
+              <div style="font-weight:700" id="scoreLabel">Low visibility</div>
+              <div class="note" id="scoreNote">Your business is hard to find on Google.</div>
+            </div>
+          </div>
+
+          <div class="snapshot section" id="snapshotArea">
+            <strong>Google Visibility Snapshot</strong>
+            <div style="margin-top:8px">
+              <div>Profile claimed: <strong id="claimedText">—</strong></div>
+              <div>Search visibility: <strong id="searchVis">—</strong></div>
+              <div>Maps visibility: <strong id="mapsVis">—</strong></div>
+              <div>Trust signals: <strong id="trustSignals">—</strong></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3>Top issues (what's blocking visibility)</h3>
+            <ul class="list" id="issuesList"></ul>
+          </div>
+
+          <div class="section">
+            <h3>Recommendations</h3>
+            <ul class="list" id="recoList"></ul>
+          </div>
+
+          <div class="cta-row">
+            <button class="btn" id="helpBtn">Request help — quick setup</button>
+            <button class="ghost" id="copyBtn">Copy short report</button>
+            <button class="ghost" id="pdfBtn">Download PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="card">
+          <div style="font-weight:700">Quick facts</div>
+          <div class="kv"><div>Audit type</div><strong>Local visibility snapshot</strong></div>
+          <div class="kv"><div>Covers</div><strong>CAC • Domain • Website • GBP • SEO basics</strong></div>
+          <div style="margin-top:10px" class="note">This snapshot uses simple checks and your input. For live API checks or in-depth SEO we can schedule a proper audit.</div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div style="font-weight:700">Export / share</div>
+          <div style="margin-top:8px" class="note">Copy the short report to paste into WhatsApp, or download a PDF to share with clients.</div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">Built by Favs — simple, honest visibility checks</div>
   </div>
-</section>
 
-<div class="layout">
-
-<!-- Reports Section -->
-<main class="card">
-  <h3>Audit Reports</h3>
-  <div id="reportsList" style="display:flex;flex-direction:column;gap:10px;margin-top:12px"></div>
-</main>
-
-<!-- Info / Sidebar -->
-<aside class="card">
-  <h3>Checks performed</h3>
-  <ul class="muted">
-    <li>Website availability</li>
-    <li>HTTPS security</li>
-    <li>Google Business Profile presence</li>
-    <li>Basic readiness score</li>
-  </ul>
-  <p class="muted">Reports can be downloaded as PDF or copied.</p>
-</aside>
-
-</div>
-
-<footer class="muted" style="margin-top:18px;text-align:center">
-  Built with 💙💚 by Favs Agu
-</footer>
-
-</div>
-
+<!-- html2pdf for PDF export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
-let reports=[];
+/* ----- CONFIG ----- */
+const REQUEST_HELP_PHONE = ''; // optional: add country code e.g. '2348012345678' to open WhatsApp directly
 
-// Escape text for HTML
-function escapeHtml(s){
-  if(!s) return '';
-  return String(s).replace(/[&<>\"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c];
-  });
+/* simple toggle helper */
+function toggleChip(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('active');
 }
 
-// Run audit
-function runAudit(){
-  const name=bizName.value.trim();
-  const website=bizWebsite.value.trim();
-  const gbp=bizGBP.value.trim();
+/* helper to read chip state */
+function chipOn(id){ return document.getElementById(id).classList.contains('active'); }
 
-  if(!name) return alert("Business name is required");
+/* sanitize text for copying/PDF */
+function escapeText(s){ return (s||'').toString().trim(); }
 
-  let score=0;
-  let findings=[];
+/* Validate domain pattern (basic) */
+function domainLooksValid(d){
+  if(!d) return false;
+  d = d.trim();
+  const re = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i;
+  return re.test(d);
+}
 
-  if(website){
-    score+=30;
-    if(website.startsWith("https://")){
-      score+=10;
-    } else {
-      findings.push({id:'W1',desc:'Website is not HTTPS',severity:'Medium',status:'Open'});
-    }
-  } else {
-    findings.push({id:'W0',desc:'No website provided',severity:'High',status:'Open'});
+/* Validate URL basic */
+function urlLooksLike(u){
+  if(!u) return false;
+  try{ const obj = new URL(u); return ['http:','https:'].includes(obj.protocol); } catch(e){ return false; }
+}
+
+/* Main run logic — uses user inputs & simple checks to produce a score + findings */
+function runCheck(){
+  // read inputs
+  const name = escapeText(document.getElementById('bizName').value);
+  const category = escapeText(document.getElementById('category').value);
+  const area = escapeText(document.getElementById('area').value);
+  const cac = document.getElementById('cac').value; // yes/no/not-sure
+  const domain = escapeText(document.getElementById('domain').value);
+  const website = escapeText(document.getElementById('website').value);
+  const gbp = escapeText(document.getElementById('gbp').value);
+  const findsBy = document.getElementById('findsBy').value;
+  const seo_meta = chipOn('seo_meta');
+  const seo_mobile = chipOn('seo_mobile');
+  const seo_sitemap = chipOn('seo_sitemap');
+  const photos = chipOn('hasPhotos');
+  const reviews = chipOn('hasReviews');
+
+  if(!name){
+    return alert('Please enter the business name (helps generate the snapshot)');
   }
 
-  if(gbp){
-    score+=40;
-  } else {
-    findings.push({id:'G1',desc:'Google Business Profile missing',severity:'High',status:'Open'});
-  }
-
-  if(score>100) score=100;
-
-  const report={
-    id:'R-'+(1000+reports.length+1),
-    title:`Audit Report — ${name}`,
-    date:new Date().toISOString().slice(0,10),
-    summary:`Audit completed for ${name}. Overall score: ${score}/100.`,
-    findings:findings.length?findings:[{id:'OK',desc:'No critical issues detected',severity:'Low',status:'Closed'}]
+  /* scoring weights — tweak as needed */
+  const weights = {
+    gbp: 35,
+    website: 20,
+    https: 10,
+    domain: 10,
+    seo: 10,
+    photosReviews: 15,
+    cac: 10
   };
 
-  reports.unshift(report);
-  renderReports();
-  openReport(report.id);
-}
+  // start score 0
+  let score = 0;
+  let issues = [];
+  let recs = [];
 
-// Render reports list
-function renderReports(){
-  const list=document.getElementById('reportsList');
-  list.innerHTML='';
-  reports.forEach(r=>{
-    const div=document.createElement('div');
-    div.className='report-item';
-    div.innerHTML=`
-      <div>
-        <strong>${r.title}</strong>
-        <div class="muted">${r.date}</div>
-      </div>
-      <div style="display:flex;gap:6px">
-        <button class="small" onclick="openReport('${r.id}')">Open</button>
-        <button class="small" onclick="exportPDF('${r.id}')">PDF</button>
-      </div>`;
-    list.appendChild(div);
+  // GBP check (claimed if user typed 'claimed' or pasted link)
+  let gbpClaimed = false;
+  if(gbp){
+    const lowered = gbp.toLowerCase();
+    if(lowered.includes('claim') || lowered.includes('claimed') || lowered.startsWith('http')){
+      gbpClaimed = true;
+      score += weights.gbp;
+    } else {
+      // treat as provided but not necessarily claimed
+      gbpClaimed = false;
+    }
+  } else {
+    gbpClaimed = false;
+  }
+
+  if(!gbpClaimed){
+    issues.push('Google Business Profile not claimed or not provided.');
+    recs.push('Claim and complete your Google Business Profile (name, address, hours, photos).');
+  }
+
+  // website checks
+  if(urlLooksLike(website)){
+    score += weights.website;
+    // https
+    if(website.startsWith('https://')) score += weights.https;
+    else issues.push('Website is not using HTTPS (secure).');
+  } else {
+    if(website) issues.push('Website URL seems invalid.');
+    else issues.push('No website present (helps trust).');
+    recs.push('Add at least a simple website or link page with contact details.');
+  }
+
+  // domain pattern
+  if(domain){
+    if(domainLooksValid(domain)){
+      score += weights.domain;
+    } else {
+      issues.push('Domain name looks invalid (check the format).');
+    }
+  } else {
+    // optional—suggest domain
+    recs.push('Consider getting a simple domain (e.g., yourshop.com) to boost trust.');
+  }
+
+  // SEO basics
+  let seoCount = 0;
+  if(seo_meta) { seoCount++; }
+  if(seo_mobile) { seoCount++; }
+  if(seo_sitemap) { seoCount++; }
+  if(seoCount > 0){
+    score += Math.round(weights.seo * (seoCount / 3));
+  } else {
+    recs.push('Add a meta description & ensure your site is mobile-friendly for better visibility.');
+  }
+
+  // photos & reviews
+  if(photos && reviews){
+    score += weights.photosReviews;
+  } else if(photos || reviews){
+    score += Math.round(weights.photosReviews * 0.6);
+    if(!photos) recs.push('Add clear photos of your place, products or work samples.');
+    if(!reviews) recs.push('Encourage a few customers to leave short reviews.');
+  } else {
+    recs.push('Add photos and ask customers for reviews to build trust.');
+  }
+
+  // CAC
+  if(cac === 'yes'){ score += weights.cac; }
+  else if(cac === 'not-sure'){ /* partial */ score += Math.round(weights.cac * 0.4); recs.push('If possible, register with CAC to build business credibility.'); }
+  else { recs.push('Consider CAC registration when you are ready — it builds trust for some customers.'); }
+
+  // finding source penalty/bonus
+  if(findsBy === 'google'){ score += 8; }
+  else if(findsBy === 'referrals'){ /* no change */ }
+
+  // clamp score 0-100
+  if(score > 100) score = 100;
+  if(score < 0) score = 0;
+
+  // Interpret
+  let label = 'Low visibility';
+  let note = 'Your business is hard to find on Google.';
+  if(score >= 75){ label = 'Good visibility'; note = 'Your business shows up clearly for local searches.'; }
+  else if(score >= 45){ label = 'Moderate visibility'; note = 'Some things work, but key gaps remain.'; }
+
+  // Build issues list (dedupe)
+  issues = Array.from(new Set(issues));
+  recs = Array.from(new Set(recs));
+
+  // Snapshot inference for display
+  const claimedText = gbpClaimed ? 'Claimed' : (gbp ? 'Provided / needs review' : 'Not claimed');
+  const trustSignals = (photos && reviews) ? 'Has photos & reviews' : (photos ? 'Has photos' : (reviews ? 'Has reviews' : 'Missing'));
+
+  // Render result
+  document.getElementById('scoreVal').textContent = score;
+  document.getElementById('scoreLabel').textContent = label;
+  document.getElementById('scoreNote').textContent = note;
+  document.getElementById('claimedText').textContent = claimedText;
+  document.getElementById('searchVis').textContent = score >= 60 ? 'High' : (score >= 35 ? 'Medium' : 'Low');
+  document.getElementById('mapsVis').textContent = score >= 55 ? 'Visible' : (score >= 30 ? 'Partially visible' : 'Hidden');
+  document.getElementById('trustSignals').textContent = trustSignals;
+
+  // fill issues + recs in UI
+  const issuesEl = document.getElementById('issuesList');
+  const recEl = document.getElementById('recoList');
+  issuesEl.innerHTML = '';
+  recEl.innerHTML = '';
+
+  issues.forEach(it=>{
+    const li = document.createElement('li'); li.textContent = it; issuesEl.appendChild(li);
   });
+  recs.forEach(it=>{
+    const li = document.createElement('li'); li.textContent = it; recEl.appendChild(li);
+  });
+
+  // Show result card
+  document.getElementById('resultCard').style.display = 'block';
+
+  // prepare short report text
+  const shortReport = `${name} (${area || '—'}) — Visibility score: ${score}/100\nIssues: ${issues.join(' • ')}\nTop fix: ${recs[0] || 'Claim GBP & add photos'}`;
+
+  // wire buttons
+  document.getElementById('copyBtn').onclick = ()=> {
+    navigator.clipboard?.writeText(shortReport).then(()=> alert('Short report copied.'));
+  };
+  document.getElementById('pdfBtn').onclick = ()=> {
+    // make a printable clone with brand header
+    const node = document.createElement('div');
+    node.style.padding='18px'; node.style.background='white'; node.style.color='#111';
+    node.innerHTML = `
+      <h2>Visibility Audit Report — ${escapeText(name)}</h2>
+      <div><strong>Location:</strong> ${escapeText(area)}</div>
+      <div><strong>Category:</strong> ${escapeText(category)}</div>
+      <div style="margin:12px 0"><strong>Overall score:</strong> ${score}/100 — ${label}</div>
+      <h4>Snapshot</h4>
+      <div>GBP: ${claimedText}</div>
+      <div>Search visibility: ${document.getElementById('searchVis').textContent}</div>
+      <div>Maps visibility: ${document.getElementById('mapsVis').textContent}</div>
+      <div style="margin-top:12px"><h4>Top issues</h4><ul>${issues.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+      <div style="margin-top:12px"><h4>Recommendations</h4><ul>${recs.map(i=>`<li>${i}</li>`).join('')}</ul></div>
+      <div style="margin-top:18px;color:#666;font-size:12px">Generated by Visibility Snapshot — ${new Date().toLocaleString()}</div>
+    `;
+    const opt = { margin:10, filename:`${name || 'audit'}-visibility.pdf`, image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'mm',format:'a4'} };
+    html2pdf().from(node).set(opt).save();
+  };
+
+  document.getElementById('helpBtn').onclick = ()=> {
+    const msg = encodeURIComponent(`Hi, I ran a visibility snapshot for ${name || 'your business'} (${area || '—'}). Score ${score}/100. I can help set this up and improve visibility. Are you open to a quick chat?`);
+    const url = REQUEST_HELP_PHONE ? `https://wa.me/${REQUEST_HELP_PHONE}?text=${msg}` : `https://api.whatsapp.com/send?text=${msg}`;
+    window.open(url,'_blank');
+  };
 }
 
-// Open report modal
-function openReport(id){
-  const r=reports.find(x=>x.id===id);
-  if(!r) return;
+/* small utility to escape before injecting into printable HTML */
+function escapeText(s){ return (s||'').toString().replace(/[&<>"]/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
-  const modal=document.createElement('div');
-  modal.style.position='fixed';
-  modal.style.inset='0';
-  modal.style.background='rgba(0,0,0,0.6)';
-  modal.style.display='flex';
-  modal.style.alignItems='center';
-  modal.style.justifyContent='center';
-  modal.innerHTML=`
-    <div class="card" id="printable" style="max-width:800px;width:90%;max-height:90vh;overflow:auto">
-      <h2>${escapeHtml(r.title)}</h2>
-      <p class="muted">${r.date}</p>
-      <p>${escapeHtml(r.summary)}</p>
-      <h3>Findings</h3>
-      <table>
-        <tr><th>ID</th><th>Description</th><th>Severity</th><th>Status</th></tr>
-        ${r.findings.map(f=>`<tr><td>${f.id}</td><td>${escapeHtml(f.desc)}</td><td>${f.severity}</td><td>${f.status}</td></tr>`).join('')}
-      </table>
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn" onclick="exportPDF('${r.id}')">Download PDF</button>
-        <button class="small" onclick="this.closest('div[style]').parentElement.remove()">Close</button>
-      </div>
-    </div>`;
-  document.body.appendChild(modal);
-}
-
-// Export report as PDF
-function exportPDF(id){
-  const r=reports.find(x=>x.id===id);
-  if(!r) return;
-  const el=document.getElementById('printable');
-  html2pdf().from(el).save(`${r.title}.pdf`);
-}
+/* init: make some chips active by default? (no) */
 </script>
-
 </body>
 </html>
